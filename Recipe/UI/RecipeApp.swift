@@ -10,6 +10,7 @@ import SwiftData
 
 @main
 struct RecipeApp: App {
+    @Environment(\.modelContext) private var modelContext
 //    var sharedModelContainer: ModelContainer = {
 //        let schema = Schema([
 //            Item.self,
@@ -28,5 +29,12 @@ struct RecipeApp: App {
             MainFlow()
         }
 //        .modelContainer(sharedModelContainer)
+    }
+    
+    func loadInitialData() {
+        let recipe = [
+        Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: <#T##Data?#>, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]),
+        Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "мясо", "Картофель"], image: <#T##Data?#>, steps: ["Смешать в кастрюле все ингридиенты", "Варить до готовности"])
+        ]
     }
 }

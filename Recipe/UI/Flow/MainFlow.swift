@@ -3,6 +3,7 @@ import SwiftUI
 enum MainFlowTab {
     case recipt
     case favourites
+    case settings
 }
 
 struct MainFlow: View {
@@ -14,7 +15,11 @@ struct MainFlow: View {
      
      TabBarButtonConfiguration(title: "Закрепленные",
                                icon: "heart.fill",
-                               tab: .favourites)
+                               tab: .favourites),
+     
+     TabBarButtonConfiguration(title: "Настройки",
+                               icon: "gear",
+                               tab: .settings)
     ]
     
     var body: some View {
@@ -95,12 +100,12 @@ private struct TabBarButtons: View {
         } label: {
             VStack(spacing: 0) {
                 Image(systemName: config.icon)
-                    .font(.title)
+                    .font(.title2)
                     .foregroundStyle(isSelected ? .white : .blue)
                     .padding(.top, 5)
                 
                 Text(config.title)
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
                     .foregroundColor(isSelected ? .white : .blue)
                     .padding(.bottom, 5)
             }

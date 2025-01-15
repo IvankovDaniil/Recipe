@@ -1,5 +1,5 @@
 //
-//  ReciptFlow.swift
+//  ReciptScreen.swift
 //  Recipe
 //
 //  Created by Даниил Иваньков on 15.01.2025.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct ReciptFlow: View {
+struct ReciptScreen: View {
     var body: some View {
-        ReciptScreen()
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
 }
 
 #Preview {
-    ReciptFlow()
+    ReciptScreen()
 }
