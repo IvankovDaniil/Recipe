@@ -10,14 +10,13 @@ import SwiftData
 
 @Model
 class Recipe: Identifiable {
-    @Attribute var id = UUID()
-    @Attribute var title: String
-    @Attribute var ingredients: [String]
-    @Attribute var image: Data?
-    @Attribute var steps: [String]
+    var id = UUID()
+    var title: String
+    var ingredients: [String]
+    var image: Data?
+    var steps: [String]
     
-    init(id: UUID = UUID(), title: String, ingredients: [String], image: Data?, steps: [String]) {
-        self.id = id
+    init(title: String, ingredients: [String], image: Data?, steps: [String]) {
         self.title = title
         self.ingredients = ingredients
         self.image = image

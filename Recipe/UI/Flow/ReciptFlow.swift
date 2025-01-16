@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct ReciptFlow: View {
+    @Environment(\.modelContext) var modelContext
     var body: some View {
         NavigationStack {
-            ReciptScreen()
+            ReciptScreen(modelContext: modelContext)
         }
     }
 }

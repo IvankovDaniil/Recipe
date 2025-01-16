@@ -9,13 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct ReciptScreen: View {
-    @Environment(\.modelContext) var modelContex
-    @Query(sort: \Recipe.title) var recipe: [Recipe]
+    @Environment(\.modelContext) var modelContext
+    @StateObject private var viewModel: RecipeViewModel
     
+    init(modelContext: ModelContext) {
+        _viewModel = StateObject(wrappedValue: RecipeViewModel(modelContext: modelContext))
+    }
+        
     var body: some View {
         ScrollView {
             HStack {
-                ForEach(recipe) { recipe in
+                ForEach(viewModel.allRecipe) { recipe in
                     RecipeView(recipe: recipe)
                 }
             }
@@ -45,8 +49,8 @@ private struct RecipeView: View {
                     Text("Для блюда вам понадобится:")
                         .font(Font.custom("Montserrat", size: 14))
                         .padding(.bottom, 5)
-                    ForEach(recipe.ingredients.prefix(3), id: \.self) { ingredient in
-                        Text("\(recipe.ingredients.firstIndex(of: ingredient)! + 1). \(ingredient)")
+                    ForEach(Array(recipe.ingredients.prefix(3).enumerated()), id: \.offset) {index, ingredient in
+                        Text("\(index + 1). \(ingredient)")
                             .lineLimit(1)
                             .font(Font.custom("Montserrat", size: 14))
                     }
@@ -58,8 +62,8 @@ private struct RecipeView: View {
                 
                 Image(systemName: isPressed ? "arrowshape.forward.fill" : "arrowshape.forward")
                     .resizable()
-                    .frame(width: 14, height: 14)
-                    .padding(20)
+                    .frame(width: 20, height: 20)
+                    .padding(10)
                     .foregroundColor(.blue)
             }
         }
@@ -99,8 +103,8 @@ private struct RecipeView: View {
     modelContext.insert(recipe1)
     modelContext.insert(recipe2)
 
-    return ReciptScreen()
-        .modelContainer(modelContainer)
+    return ReciptScreen(modelContext: modelContext)
+                .modelContainer(modelContainer)
 }
 
 
