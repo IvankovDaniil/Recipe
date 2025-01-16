@@ -10,31 +10,56 @@ import SwiftData
 
 @main
 struct RecipeApp: App {
-    @Environment(\.modelContext) private var modelContext
-//    var sharedModelContainer: ModelContainer = {
-//        let schema = Schema([
-//            Item.self,
-//        ])
-//        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-//
-//        do {
-//            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-//        } catch {
-//            fatalError("Could not create ModelContainer: \(error)")
-//        }
-//    }()
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            Recipe.self,
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+
 
     var body: some Scene {
+        
         WindowGroup {
             MainFlow()
+                .onAppear {
+                    loadInitialData(modelContext: sharedModelContainer.mainContext)
+                }
+                .modelContainer(sharedModelContainer)
         }
-//        .modelContainer(sharedModelContainer)
     }
     
-    func loadInitialData() {
-        let recipe = [
-        Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: <#T##Data?#>, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]),
-        Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "мясо", "Картофель"], image: <#T##Data?#>, steps: ["Смешать в кастрюле все ингридиенты", "Варить до готовности"])
-        ]
+    func loadInitialData(modelContext: ModelContext) {
+        
+        let fetchDescriptor = FetchDescriptor<Recipe>()
+        
+        if let recipeModel = try? modelContext.fetch(fetchDescriptor), !recipeModel.isEmpty {
+            return
+        }
+        
+        if let image = UIImage(named: "friedEggs") {
+            let imageData =  image.jpegData(compressionQuality: 1.0)
+            
+            let recipe = [
+            Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: imageData, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]),
+            Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "мясо", "Картофель"], image: imageData, steps: ["Смешать в кастрюле все ингридиенты", "Варить до готовности"])
+            ]
+            
+            for  recipeItem in recipe {
+                modelContext.insert(recipeItem)
+            }
+            
+            do {
+                try modelContext.save()
+            } catch {
+                print("Ошибка при сохранении данных")
+            }
+        }
     }
 }

@@ -9,7 +9,9 @@ import SwiftUI
 
 struct ReciptFlow: View {
     var body: some View {
-        ReciptScreen()
+        NavigationStack {
+            ReciptScreen()
+        }
     }
 }
 
