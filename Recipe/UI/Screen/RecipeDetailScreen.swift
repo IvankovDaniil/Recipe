@@ -20,10 +20,51 @@ struct RecipeDetailScreen: View {
                     .clipShape(RoundedRectangle(cornerRadius: 20))
                     .blueRoundedBorder()
                     .frame(width: 300, height: 200)
+                    .padding(.bottom, 30)
                     
+                VStack(spacing: 0) {
+                    Text(recipe.title)
+                        .font(.title)
+                        .padding([.top, .bottom], 5)
+                    Text("Приготовим за \(viewModel.textForSteps(recipe))")
+                        .padding(.bottom, 5)
+                }
+                .frame(maxWidth: .infinity)
+                .blueRoundedBorder()
+                .padding(EdgeInsets(top: 0, leading: 50, bottom: 20, trailing: 50))
+                
+                VStack(spacing: 0) {
+                    Text("Ингредиенты")
+                        .font(.title2)
+                        .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                    ForEach(recipe.ingredients, id: \.self) { ingridient in
+                        Text("-\(ingridient)")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(EdgeInsets(top: 2, leading: 20, bottom: 2, trailing: 0))
+                }
+                .padding([.top, .bottom], 5)
+                .frame(maxWidth: .infinity)
+                .blueRoundedBorder()
+                .padding(EdgeInsets(top: 0, leading: 50, bottom: 20, trailing: 50))
                     
+                VStack(alignment: .leading, spacing: 0) {
+                    Text("Рецепт")
+                        .font(.title2)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
+                    ForEach(Array(recipe.steps.enumerated()), id: \.offset) {index, steps in
+                        Text("\(index + 1). \(steps)")
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(EdgeInsets(top: 2, leading: 20, bottom: 2, trailing: 0))
+                }
+                .padding([.top, .bottom], 5)
+                .frame(maxWidth: .infinity)
+                .blueRoundedBorder()
+                .padding(EdgeInsets(top: 0, leading: 50, bottom: 20, trailing: 50))
+                
             }
-            .frame(maxWidth: .infinity)
         }
     }
 }

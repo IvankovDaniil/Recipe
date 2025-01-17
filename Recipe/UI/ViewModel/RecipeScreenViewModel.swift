@@ -28,6 +28,19 @@ class RecipeViewModel {
         return Image("")
     }
     
+    func textForSteps(_ recipe: Recipe) -> String {
+        switch recipe.steps.count {
+            
+            case 1: return "1 шаг"
+            case 2..<5: return "\(recipe.steps.count) шага"
+            default: return "\(recipe.steps.count) шагов"
+        }
+    }
+    
+    func countSteps(for recipe: Recipe) -> Int {
+        return recipe.steps.count
+    }
+    
     func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {
         return Array(recipe.ingredients.prefix(limit))
     }
