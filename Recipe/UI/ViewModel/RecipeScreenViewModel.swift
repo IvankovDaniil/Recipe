@@ -37,12 +37,13 @@ class RecipeViewModel {
         }
     }
     
-    func countSteps(for recipe: Recipe) -> Int {
+    func countSteps(for recipe: Recipe) -> Int { 
         return recipe.steps.count
     }
     
     func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {
-        return Array(recipe.ingredients.prefix(limit))
+        let ingridients = recipe.decodeJSON(recipeElement: recipe.ingredients)
+        return Array(ingridients.prefix(limit))
     }
 }
 

@@ -11,18 +11,17 @@ import SwiftData
 @main
 struct RecipeApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Recipe.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            // Убедитесь, что схема и конфигурация правильные
+            let schema = Schema([Recipe.self])
+            let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            
+            // Попробуйте использовать инициализацию без конфигурации
+            return try ModelContainer(for: schema)
+        } catch let error {
+            fatalError("Could not create ModelContainer: \(error.localizedDescription)") // Уточняем ошибку
         }
     }()
-
 
     var body: some Scene {
         
@@ -47,8 +46,22 @@ struct RecipeApp: App {
             let imageData =  image.jpegData(compressionQuality: 1.0)
             
             let recipe = [
-            Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: imageData, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]),
-            Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "мясо", "Картофель"], image: imageData, steps: ["Смешать в кастрюле все ингридиенты", "Варить до готовности"])
+                Recipe(
+                    title: "Омлет",
+                    ingredients: ["Яйца", "Соль", "Масло"],
+                    image: imageData,
+                    steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"],
+                    rating: 4,
+                    isFavorite: false
+                ),
+                Recipe(
+                    title: "Борщ",
+                    ingredients: ["Свекла", "Капуста", "мясо", "Картофель"],
+                    image: imageData,
+                    steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"],
+                    rating: 4,
+                    isFavorite: false
+                )
             ]
             
             for  recipeItem in recipe {

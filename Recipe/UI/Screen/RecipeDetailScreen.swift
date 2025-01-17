@@ -37,7 +37,7 @@ struct RecipeDetailScreen: View {
                     Text("Ингредиенты")
                         .font(.title2)
                         .padding(EdgeInsets(top: 5, leading: 0, bottom: 5, trailing: 0))
-                    ForEach(recipe.ingredients, id: \.self) { ingridient in
+                    ForEach(recipe.decodeJSON(recipeElement: recipe.ingredients), id: \.self) { ingridient in
                         Text("-\(ingridient)")
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -77,7 +77,7 @@ struct RecipeDetailScreen: View {
     let modelContext = modelContainer.mainContext
 
     // Создаем рецепт
-    let recipe = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: borsch, steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"])
+    let recipe = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: borsch, steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"], rating: 4.0)
     
     // Вставляем рецепт в контекст модели
     modelContext.insert(recipe)

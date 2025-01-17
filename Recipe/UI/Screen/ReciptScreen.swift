@@ -103,37 +103,56 @@ struct ShortIntroductionRecipe: View {
     }
 }
 
-
 #Preview {
-    let modelContainer = try! ModelContainer(for: Recipe.self)
-    
-    var image = UIImage(named: "friedEggs")
-    let friedEggs =  image?.jpegData(compressionQuality: 1.0)!
-    image = UIImage(named: "borsch")
-    let borsch =  image?.jpegData(compressionQuality: 1.0)!
+    do {
+        // Попробуем создать контейнер данных
+        let modelContainer = try ModelContainer(for: Recipe.self)
 
-    let recipe1 = Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: friedEggs, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"])
-    let recipe2 = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: borsch, steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"])
-    
-    let modelContext = modelContainer.mainContext
-    modelContext.insert(recipe1)
-    modelContext.insert(recipe2)
-    try! modelContext.save()
-    //
+        // Создаем контекст модели
+        let modelContext = modelContainer.mainContext
 
-    return ReciptFlow()
-        .modelContainer(modelContainer)
-        .onAppear{
-            
-        }
-    
+        // Загружаем данные для теста
+        var image = UIImage(named: "friedEggs")
+        let friedEggs = image?.jpegData(compressionQuality: 1.0)
+        image = UIImage(named: "borsch")
+        let borsch = image?.jpegData(compressionQuality: 1.0)
+
+        let recipe1 = Recipe(
+            title: "Омлет",
+            ingredients: ["Яйца", "Соль", "Масло"],
+            image: friedEggs,
+            steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"],
+            rating: 4,
+            isFavorite: false
+        )
+
+        let recipe2 = Recipe(
+            title: "Борщ",
+            ingredients: ["Свекла", "Капуста", "мясо", "Картофель"],
+            image: borsch,
+            steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"],
+            rating: 4,
+            isFavorite: false
+        )
+
+        // Вставляем данные в контекст модели
+        modelContext.insert(recipe1)
+        modelContext.insert(recipe2)
+
+        // Сохраняем контекст
+        try modelContext.save()
+
+        // Возвращаем ваш основной экран с моделью
+        return ReciptFlow()
+            .modelContainer(modelContainer)
+    } catch {
+        print("Ошибка при инициализации ModelContainer: \(error)")
+        return Text("Ошибка инициализации данных")
+    }
 }
 
 
-//#Preview {
-//    let image = UIImage(named: "friedEggs")
-//    let friedEggs =  image?.jpegData(compressionQuality: 1.0)!
-//    
-//    RecipeView(recipe: Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: friedEggs, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]))
-//}
+
+
+
 
