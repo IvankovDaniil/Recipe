@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 @Observable
-class RecipeViewModel: ObservableObject {
+class RecipeViewModel {
     var allRecipe: [Recipe] = []
     
     private var modelContext: ModelContext
@@ -19,6 +19,17 @@ class RecipeViewModel: ObservableObject {
         } catch {
             print("Ошибка загрузки рецептов: \(error)")
         }
+    }
+    
+    func showImage(for recipe: Recipe) -> Image {
+        if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
+            return Image(uiImage: uiImage)
+        }
+        return Image("")
+    }
+    
+    func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {
+        return Array(recipe.ingredients.prefix(limit))
     }
 }
 

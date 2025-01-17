@@ -10,62 +10,56 @@ import SwiftData
 
 struct ReciptScreen: View {
     @Environment(\.modelContext) var modelContext
-    @StateObject private var viewModel: RecipeViewModel
+    @State private var viewModel: RecipeViewModel
+    @Binding var path: [Recipe]
     
-    init(modelContext: ModelContext) {
-        _viewModel = StateObject(wrappedValue: RecipeViewModel(modelContext: modelContext))
-    }
+    init(path: Binding<[Recipe]>, modelContext: ModelContext) {
         
+        _viewModel = State(wrappedValue: RecipeViewModel(modelContext: modelContext))
+        _path = path
+    }
+    
     var body: some View {
         ScrollView {
-            HStack {
+            LazyVGrid(
+                columns: [
+                    GridItem(.flexible(minimum: 150, maximum: 200)),
+                    GridItem(.flexible(minimum: 150, maximum: 200))
+                ]
+            ) {
                 ForEach(viewModel.allRecipe) { recipe in
-                    RecipeView(recipe: recipe)
+                    Button {
+                        path.append(recipe)
+                    } label: {
+                        RecipeView(viewModel: viewModel, recipe: recipe)
+                    }
                 }
             }
-        }
 
+        }
+        .navigationDestination(for: Recipe.self, destination: { recipe in
+            RecipeDetailScreen(viewModel: viewModel, recipe: recipe)
+        })
         .navigationTitle("Рецепты")
     }
     
 }
 
 private struct RecipeView: View {
+    
+    @State private var isPressed = false  // Состояние для отслеживания нажатия
+    @Bindable var viewModel: RecipeViewModel
     let recipe: Recipe
-    @State private var isPressed = false // Состояние для отслеживания нажатия
     
     var body: some View {
-        Button {
+        ZStack(alignment: .bottomTrailing) {
+            ShortIntroductionRecipe(viewModel: viewModel, recipe: recipe)
             
-        } label: {
-            ZStack(alignment: .bottomTrailing) {
-                VStack(spacing: 0) {
-                    showImage(for: recipe)
-                        .resizable()
-                        .frame(width: 120, height: 120)
-                        .padding(.bottom, 5)
-                    Text(recipe.title)
-                        .font(Font.custom("Montserrat", size: 25))
-                    Text("Для блюда вам понадобится:")
-                        .font(Font.custom("Montserrat", size: 14))
-                        .padding(.bottom, 5)
-                    ForEach(Array(recipe.ingredients.prefix(3).enumerated()), id: \.offset) {index, ingredient in
-                        Text("\(index + 1). \(ingredient)")
-                            .lineLimit(1)
-                            .font(Font.custom("Montserrat", size: 14))
-                    }
-                    
-                    
-                }
-                .padding(20)
-                .background(RoundedRectangle(cornerRadius: 20).stroke(.blue, lineWidth: 4).shadow(color: .blue, radius: 5, x: 3, y: 3))
-                
-                Image(systemName: isPressed ? "arrowshape.forward.fill" : "arrowshape.forward")
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                    .padding(10)
-                    .foregroundColor(.blue)
-            }
+            Image(systemName: isPressed ? "arrowshape.forward.fill" : "arrowshape.forward")
+                .resizable()
+                .frame(width: 20, height: 20)
+                .padding(10)
+                .foregroundColor(.blue)
         }
         .padding(EdgeInsets(top: 20, leading: 15, bottom: 20, trailing: 15))
         .buttonStyle(PlainButtonStyle())
@@ -78,15 +72,37 @@ private struct RecipeView: View {
                     isPressed = false // Возвращаем состояние обратно
                 }
         )
-    }
 
-    func showImage(for recipe: Recipe) -> Image {
-        if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
-            return Image(uiImage: uiImage)
-        }
-        return Image("")
     }
 }
+
+struct ShortIntroductionRecipe: View {
+    @Bindable var viewModel: RecipeViewModel
+    let recipe: Recipe
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            viewModel.showImage(for: recipe)
+                .resizable()
+                .frame(width: 120, height: 120)
+                .padding(.bottom, 5)
+            Text(recipe.title)
+                .font(Font.custom("Montserrat", size: 25))
+            Text("Для блюда вам понадобится:")
+                .font(Font.custom("Montserrat", size: 14))
+                .padding(.bottom, 5)
+            ForEach(viewModel.viewCondition(for: recipe), id: \.self) { ingredient in
+                Text("\(ingredient)")
+                    .lineLimit(1)
+                    .font(Font.custom("Montserrat", size: 14))
+            }
+        }
+        .foregroundStyle(.black)
+        .padding(20)
+        .blueRoundedBorder()
+    }
+}
+
 
 #Preview {
     let modelContainer = try! ModelContainer(for: Recipe.self)
@@ -102,15 +118,22 @@ private struct RecipeView: View {
     let modelContext = modelContainer.mainContext
     modelContext.insert(recipe1)
     modelContext.insert(recipe2)
+    try! modelContext.save()
+    //
 
-    return ReciptScreen(modelContext: modelContext)
-                .modelContainer(modelContainer)
-}
-
-
-#Preview {
-    let image = UIImage(named: "friedEggs")
-    let friedEggs =  image?.jpegData(compressionQuality: 1.0)!
+    return ReciptFlow()
+        .modelContainer(modelContainer)
+        .onAppear{
+            
+        }
     
-    RecipeView(recipe: Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: friedEggs, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]))
 }
+
+
+//#Preview {
+//    let image = UIImage(named: "friedEggs")
+//    let friedEggs =  image?.jpegData(compressionQuality: 1.0)!
+//    
+//    RecipeView(recipe: Recipe(title: "Омлет", ingredients: ["Яйца", "Соль", "Масло"], image: friedEggs, steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"]))
+//}
+

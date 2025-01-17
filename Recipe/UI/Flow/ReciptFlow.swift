@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ReciptFlow: View {
     @Environment(\.modelContext) var modelContext
+    @State private var path = [Recipe]()
+    
     var body: some View {
-        NavigationStack {
-            ReciptScreen(modelContext: modelContext)
+        NavigationStack(path: $path) {
+            ReciptScreen(path: $path, modelContext: modelContext)
         }
     }
 }
