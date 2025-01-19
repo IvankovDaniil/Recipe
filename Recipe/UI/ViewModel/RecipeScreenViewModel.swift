@@ -12,6 +12,8 @@ class RecipeViewModel {
         loadRecipes()
     }
     
+    
+    
     func loadRecipes() {
         let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
         do {
@@ -29,16 +31,17 @@ class RecipeViewModel {
     }
     
     func textForSteps(_ recipe: Recipe) -> String {
-        switch recipe.steps.count {
+        switch countSteps(for: recipe) {
+           
             
             case 1: return "1 шаг"
-            case 2..<5: return "\(recipe.steps.count) шага"
-            default: return "\(recipe.steps.count) шагов"
+            case 2..<5: return "\(countSteps(for: recipe)) шага"
+            default: return "\(countSteps(for: recipe)) шагов"
         }
     }
     
     func countSteps(for recipe: Recipe) -> Int { 
-        return recipe.steps.count
+        return recipe.decodeJSON(recipeElement: recipe.steps).count
     }
     
     func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {

@@ -12,14 +12,12 @@ import SwiftData
 struct RecipeApp: App {
     var sharedModelContainer: ModelContainer = {
         do {
-            // Убедитесь, что схема и конфигурация правильные
+            
             let schema = Schema([Recipe.self])
             let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-            
-            // Попробуйте использовать инициализацию без конфигурации
             return try ModelContainer(for: schema)
         } catch let error {
-            fatalError("Could not create ModelContainer: \(error.localizedDescription)") // Уточняем ошибку
+            fatalError("Could not create ModelContainer: \(error.localizedDescription)") 
         }
     }()
 
