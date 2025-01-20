@@ -9,12 +9,16 @@ import SwiftUI
 import SwiftData
 
 struct ReciptScreen: View {
-    @Environment(\.modelContext) var modelContext
+    //@Environment(\.modelContext) var modelContext
     @State private var viewModel: RecipeViewModel
     @Binding var path: [Recipe]
-    
-    init(path: Binding<[Recipe]>, modelContext: ModelContext) {
-        
+    let screenCondition: ScreenCondition
+    init(
+        path: Binding<[Recipe]>,
+        modelContext: ModelContext,
+        screenCondition: ScreenCondition
+    ) {
+        self.screenCondition = screenCondition
         _viewModel = State(wrappedValue: RecipeViewModel(modelContext: modelContext))
         _path = path
     }
@@ -27,7 +31,7 @@ struct ReciptScreen: View {
                     GridItem(.flexible(minimum: 150, maximum: 200))
                 ]
             ) {
-                ForEach(viewModel.allRecipe) { recipe in
+                ForEach(viewModel.recipeScreenCondition(condition: screenCondition)) { recipe in
                     Button {
                         path.append(recipe)
                     } label: {
@@ -40,7 +44,7 @@ struct ReciptScreen: View {
         .navigationDestination(for: Recipe.self, destination: { recipe in
             RecipeDetailScreen(viewModel: viewModel, recipe: recipe)
         })
-        .navigationTitle("Рецепты")
+        .navigationTitle(viewModel.titleForRecipeScree(screenCondition: screenCondition))
     }
     
 }

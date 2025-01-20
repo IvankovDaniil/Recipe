@@ -13,7 +13,7 @@ struct ReciptFlow: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            ReciptScreen(path: $path, modelContext: modelContext)
+            ReciptScreen(path: $path, modelContext: modelContext, screenCondition: .recipeScreen)
         }
     }
 }

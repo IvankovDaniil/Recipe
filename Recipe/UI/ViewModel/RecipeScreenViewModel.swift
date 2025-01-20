@@ -1,6 +1,11 @@
 import SwiftUI
 import SwiftData
 
+enum ScreenCondition {
+    case recipeScreen
+    case favoriteScreen
+}
+
 @Observable
 class RecipeViewModel {
     var allRecipe: [Recipe] = []
@@ -12,6 +17,12 @@ class RecipeViewModel {
         loadRecipes()
     }
     
+    func recipeScreenCondition(condition: ScreenCondition) -> [Recipe] {
+        switch condition {
+        case .recipeScreen: return allRecipe
+        case .favoriteScreen: return allRecipe.filter { $0.isFavorite == true }
+        }
+    }
     
     
     func loadRecipes() {
@@ -42,6 +53,13 @@ class RecipeViewModel {
     
     func countSteps(for recipe: Recipe) -> Int { 
         return recipe.decodeJSON(recipeElement: recipe.steps).count
+    }
+    
+    func titleForRecipeScree(screenCondition: ScreenCondition) -> String {
+        switch screenCondition {
+        case .recipeScreen: return "Рецепты"
+        case .favoriteScreen: return "Любимые рецепты"
+        }
     }
     
     func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {

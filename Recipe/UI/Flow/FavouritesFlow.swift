@@ -1,8 +1,13 @@
 import SwiftUI
 
 struct FavouritesFlow: View {
+    @Environment(\.modelContext) var modelContext
+    @State private var path = [Recipe]()
+    
     var body: some View {
-        Text("FavouritesFlow!")
+        NavigationStack(path: $path) {
+            ReciptScreen(path: $path, modelContext: modelContext, screenCondition: .favoriteScreen)
+        }
     }
 }
 
