@@ -29,6 +29,8 @@ struct MainFlow: View {
                     .tag(MainFlowTab.recipt)
                 FavouritesFlow()
                     .tag(MainFlowTab.favourites)
+                SettingsFlow()
+                    .tag(MainFlowTab.settings)
             }
             TabBarLabel(buttons: buttons, currentTab: $currentTab)
         }

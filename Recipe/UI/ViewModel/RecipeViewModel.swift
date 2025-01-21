@@ -9,14 +9,27 @@ enum ScreenCondition {
 @Observable
 class RecipeViewModel {
     var allRecipe: [Recipe] = []
+    var user: UserModel? = nil
     
     private var modelContext: ModelContext
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         loadRecipes()
+        loadUserProfile()
     }
-    
+    //Загрузка профиля
+    func loadUserProfile() {
+        if let savedProfile = UserDefaults.standard.data(forKey: "user") {
+            let decoder = JSONDecoder()
+            if let decoderProfile = try? decoder.decode(UserModel.self, from: savedProfile) {
+                self.user = decoderProfile
+                return
+            }
+        }
+        self.user = nil
+    }
+    //Условие для любимых и всех рецептов
     func recipeScreenCondition(condition: ScreenCondition) -> [Recipe] {
         switch condition {
         case .recipeScreen: return allRecipe
@@ -24,16 +37,18 @@ class RecipeViewModel {
         }
     }
     
-    
+    //Загрузка рецептов всех
     func loadRecipes() {
-        let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
-        do {
-            allRecipe = try modelContext.fetch(fetchDescriptor)
-        } catch {
-            print("Ошибка загрузки рецептов: \(error)")
+        Thread.detachNewThread { [self] in
+            let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
+            do {
+                allRecipe = try modelContext.fetch(fetchDescriptor)
+            } catch {
+                print("Ошибка загрузки рецептов: \(error)")
+            }
         }
     }
-    
+    //Загрузить фото
     func showImage(for recipe: Recipe) -> Image {
         if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
             return Image(uiImage: uiImage)
@@ -66,5 +81,20 @@ class RecipeViewModel {
         let ingridients = recipe.decodeJSON(recipeElement: recipe.ingredients)
         return Array(ingridients.prefix(limit))
     }
+
 }
 
+struct RecipeViewModelKey: EnvironmentKey {
+    static var defaultValue: RecipeViewModel? = nil
+    
+    typealias Value = RecipeViewModel?
+
+}
+
+extension EnvironmentValues {
+    var viewModel: RecipeViewModel? {
+        
+        get { self[RecipeViewModel.self] }
+        set { self[RecipeViewModel.self] = newValue }
+    }
+}

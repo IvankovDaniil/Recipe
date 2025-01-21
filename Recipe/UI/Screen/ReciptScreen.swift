@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 struct ReciptScreen: View {
-    //@Environment(\.modelContext) var modelContext
     @State private var viewModel: RecipeViewModel
     @Binding var path: [Recipe]
     let screenCondition: ScreenCondition

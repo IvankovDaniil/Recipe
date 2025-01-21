@@ -20,11 +20,19 @@ struct RecipeApp: App {
             fatalError("Could not create ModelContainer: \(error.localizedDescription)") 
         }
     }()
+    
+//    @State var viewModel: RecipeViewModel
+//    
+//    init() {
+//        let modelContext = sharedModelContainer.mainContext
+//        _viewModel = State(wrappedValue: RecipeViewModel(modelContext: modelContext))
+//    }
 
     var body: some Scene {
         
         WindowGroup {
             MainFlow()
+                .environment(\.viewModel, RecipeViewModel(modelContext: sharedModelContainer.mainContext))
                 .onAppear {
                     loadInitialData(modelContext: sharedModelContainer.mainContext)
                 }
