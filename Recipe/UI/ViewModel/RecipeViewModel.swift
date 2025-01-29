@@ -16,19 +16,8 @@ class RecipeViewModel {
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
         loadRecipes()
-        loadUserProfile()
     }
-    //Загрузка профиля
-    func loadUserProfile() {
-        if let savedProfile = UserDefaults.standard.data(forKey: "user") {
-            let decoder = JSONDecoder()
-            if let decoderProfile = try? decoder.decode(UserModel.self, from: savedProfile) {
-                self.user = decoderProfile
-                return
-            }
-        }
-        self.user = nil
-    }
+
     //Условие для любимых и всех рецептов
     func recipeScreenCondition(condition: ScreenCondition) -> [Recipe] {
         switch condition {
