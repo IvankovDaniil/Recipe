@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct SettingsFlow: View {
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         SettingsScreen()
+            .environment(UserViewModel(modelContext: modelContext))
     }
 }
 

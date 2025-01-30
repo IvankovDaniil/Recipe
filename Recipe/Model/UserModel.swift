@@ -8,14 +8,12 @@ class UserModel: Identifiable {
     var password: String
     var surname: String
     var email: String
-    var favoriteRecipeIDs: [UUID] = []
+    var favoriteRecipeIDs: [UUID]?
     
-    init(id: UUID, name: String, password: String, surname: String, email: String, favoriteRecipeIDs: [UUID]) {
-        self.id = id
+    init(id: UUID, name: String, password: String, surname: String, email: String) {
         self.name = name
         self.password = password
         self.surname = surname
         self.email = email
-        self.favoriteRecipeIDs = favoriteRecipeIDs
     }
 }

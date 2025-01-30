@@ -28,7 +28,16 @@ class VaporClient {
         
         let (data, response) = try await URLSession.shared.data(for: urlRequest)
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        if httpResponse.statusCode == 409 {
+            throw NSError(domain: "", code: 409, userInfo: [NSLocalizedDescriptionKey: "This email is already in use"])
+        }
+        
+        guard httpResponse.statusCode == 200 else {
             throw URLError(.badServerResponse)
         }
         
@@ -36,21 +45,6 @@ class VaporClient {
     }
 }
 
-
-struct RegisterRequest: Codable {
-    let name: String
-    let surname: String
-    let password: String
-    let email: String
-}
-
-struct RegisterResponse: Codable {
-    let id: UUID
-    let name: String
-    let surname: String
-    let password: String
-    let email: String
-}
 
 extension VaporClient {
     func register(name: String, surname: String, password: String, email: String) async throws -> RegisterResponse {
@@ -68,6 +62,22 @@ extension VaporClient {
             }
             throw error
         }
+    }
+    
+    func login(email: String, password: String) async throws -> RegisterResponse {
+        let req = LoginResponse(email: email, password: password)
         
+        do {
+            return try await sendRequest(to: "/users/login",
+                                         method: "POST",
+                                         body: req,
+                                         responseType: RegisterResponse.self)
+        } catch {
+            if let httpError = error as? HTTPURLResponse, httpError.statusCode == 404 {
+                throw NSError(domain: "", code: 404, userInfo: [NSLocalizedDescriptionKey: "Не правильная почта или пароль"])
+            }
+            throw error
+
+        }
     }
 }

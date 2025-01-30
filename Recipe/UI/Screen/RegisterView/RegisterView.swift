@@ -5,14 +5,15 @@
 //  Created by Даниил Иваньков on 29.01.2025.
 //
 import SwiftUI
+import SwiftData
 
 struct RegisterView: View {
     @State private var name: String = ""
     @State private var surname: String = ""
     @State private var password: String = ""
     @State private var email: String = ""
-    
-    let userViewModel = UserViewModel()
+
+    @Environment(UserViewModel.self) private var userViewModel
     
     let action: () -> Void
     var body: some View {
@@ -22,15 +23,19 @@ struct RegisterView: View {
                     VStack(spacing: 0) {
                         
                         TextField("Введите имя", text: $name)
+                            .border(userViewModel.nameError ? Color.red : Color.gray)
                             .padding(.top, 15)
                         TextField("Введите фамилию", text: $surname)
+                            .border(userViewModel.surnameError ? Color.red : Color.gray)
                             .padding(.top, 15)
                         TextField("Введите электронную почту", text: $email)
                             .keyboardType(.emailAddress)
-                            .border(.clear)
+                            .border(userViewModel.emailError ? Color.red : Color.gray)
                             .padding(.top, 15)
                         SecureField("Введите пароль", text: $password)
+                            .border(userViewModel.passwordError ? Color.red : Color.gray)
                             .padding(.top, 15)
+                            
                     }
                     .autocorrectionDisabled()
                     
@@ -43,8 +48,8 @@ struct RegisterView: View {
                     Button {
                         Task {
                             try await userViewModel.registerUser(name, surname, email, password)
-                            action()
                         }
+                        
                     } label: {
                         Text("Регистрация")
                             .padding(15)
@@ -53,12 +58,10 @@ struct RegisterView: View {
                     .padding(.top, 20)
                     .disabled(userViewModel.isLoad)
                     
-                    if userViewModel.isRegistred {
-                        Text("Registration successful! 🎉")
-                            .foregroundColor(.green)
-                    }
-                    
                 }
+                .onChange(of: userViewModel.isRegistred, {
+                    action()
+                })
                 .textFieldStyle(.roundedBorder)
                 .multilineTextAlignment(.center)
                 .padding(15)
@@ -68,14 +71,6 @@ struct RegisterView: View {
                             action()
                         } label: {
                             Text("Закрыть")
-                        }
-
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            action()
-                        } label: {
-                            Text("Сохранить")
                         }
 
                     }
@@ -90,4 +85,16 @@ struct RegisterView: View {
 
 #Preview {
     RegisterView(action: {})
+        .modelContainer(for: UserModel.self, inMemory: true) // 👈 Добавляем контейнер для Preview
+        .environment(UserViewModel(modelContext: ModelContext.preview))
+    
+}
+
+
+extension ModelContext {
+    /// Фейковый `modelContext` для Preview
+    static var preview: ModelContext {
+        let container = try! ModelContainer(for: UserModel.self, configurations: .init(isStoredInMemoryOnly: true))
+        return ModelContext(container)
+    }
 }

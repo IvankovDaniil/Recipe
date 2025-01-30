@@ -67,12 +67,12 @@ private struct RecipeView: View {
         .padding(EdgeInsets(top: 20, leading: 15, bottom: 20, trailing: 15))
         .buttonStyle(PlainButtonStyle())
         .simultaneousGesture(
-            DragGesture(minimumDistance: 0) // Используем DragGesture для обработки нажатия
+            DragGesture(minimumDistance: 0)
                 .onChanged { _ in
-                    isPressed = true // Меняем состояние нажатия
+                    isPressed = true
                 }
                 .onEnded { _ in
-                    isPressed = false // Возвращаем состояние обратно
+                    isPressed = false
                 }
         )
 

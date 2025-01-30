@@ -13,7 +13,7 @@ struct RecipeApp: App {
     var sharedModelContainer: ModelContainer = {
         do {
             
-            let schema = Schema([Recipe.self])
+            let schema = Schema([Recipe.self, UserModel.self])
             let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
             return try ModelContainer(for: schema)
         } catch let error {

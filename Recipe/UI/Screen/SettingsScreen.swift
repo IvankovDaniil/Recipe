@@ -9,12 +9,15 @@ import SwiftUI
 import SwiftData
 
 struct SettingsScreen: View {
-    @Environment(\.viewModel) var viewModel: RecipeViewModel?
+    @Environment(UserViewModel.self) private var userViewModel
+    
     
     var body: some View {
         HStack(spacing: 0) {
-            if let user = viewModel?.user {
-                Text("Hello \(user.name)")
+            if let user = userViewModel.user {
+                UserAuthorized(user: user) {
+                    userViewModel.logout()
+                }
             } else {
                 NonRegisterView()
             }
@@ -23,7 +26,8 @@ struct SettingsScreen: View {
 }
 
 private struct NonRegisterView: View {
-    @State private var isPresented: Bool = false
+    @State private var isRegPresented: Bool = false
+    @State private var isLoginPresented: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -32,18 +36,29 @@ private struct NonRegisterView: View {
                 .padding([.top, .bottom], 15)
                 .multilineTextAlignment(.center)
             
-            Button {
-                isPresented = true
-            } label: {
-                Text("Регистрация")
-                    .padding(15)
-                    .blueRoundedBorder()
+            HStack {
+                Button {
+                    isRegPresented = true
+                } label: {
+                    Text("Регистрация")
+                        .padding(15)
+                        .blueRoundedBorder()
+                }
+                .sheet(isPresented: $isRegPresented, content: {
+                    RegisterView(action: { isRegPresented = false })
+                })
+                
+                Button {
+                    isLoginPresented = true
+                } label: {
+                    Text("Войти")
+                        .padding(15)
+                        .blueRoundedBorder()
+                }
+                .sheet(isPresented: $isLoginPresented, content: {
+                    LoginView(action: { isLoginPresented = false })
+                })
             }
-            .sheet(isPresented: $isPresented, content: {
-                RegisterView(action: { isPresented = true })
-            })
-            
-
         }
         .padding()
     }
@@ -52,5 +67,7 @@ private struct NonRegisterView: View {
 
 #Preview {
     SettingsScreen()
+        .modelContainer(for: UserModel.self, inMemory: true) // 👈 Добавляем контейнер для Preview
+        .environment(UserViewModel(modelContext: ModelContext.preview))
 }
 
