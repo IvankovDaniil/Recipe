@@ -7,6 +7,8 @@ enum MainFlowTab {
 }
 
 struct MainFlow: View {
+    @Environment(\.viewModel) var viewModel
+    
     @State private var currentTab: MainFlowTab = .recipt
     private let buttons: [TabBarButtonConfiguration] =
     [TabBarButtonConfiguration(title: "Рецепты",
@@ -33,6 +35,15 @@ struct MainFlow: View {
                     .tag(MainFlowTab.settings)
             }
             TabBarLabel(buttons: buttons, currentTab: $currentTab)
+        }
+        .task {
+            do {
+                if let viewModel = viewModel {
+                    try await viewModel.loadRecipes()
+                }
+            } catch {
+                viewModel?.allRecipe = []
+            }
         }
     }
 }

@@ -11,7 +11,7 @@ class VaporClient {
     
     func sendRequest<T: Codable, U: Codable>(to endpoint: String,
                                                 method: String,
-                                                body: T?,
+                                                body: T? = nil,
                                                 responseType: U.Type) async throws -> U {
         
         guard let url = URL(string: "\(baseURL)/\(endpoint)") else {
@@ -33,8 +33,29 @@ class VaporClient {
             throw URLError(.badServerResponse)
         }
         
-        if httpResponse.statusCode == 409 {
-            throw NSError(domain: "", code: 409, userInfo: [NSLocalizedDescriptionKey: "This email is already in use"])
+        guard httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(responseType, from: data)
+    }
+    
+    func sendGetRequest<U: Codable>(to endpoint: String,
+                                                method: String,
+                                                responseType: U.Type) async throws -> U {
+        
+        guard let url = URL(string: "\(baseURL)/\(endpoint)") else {
+            fatalError("Invalid URL")
+        }
+        
+        var urlRequest = URLRequest(url: url)
+        urlRequest.httpMethod = method
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
         }
         
         guard httpResponse.statusCode == 200 else {
@@ -44,6 +65,7 @@ class VaporClient {
         return try JSONDecoder().decode(responseType, from: data)
     }
 }
+
 
 
 extension VaporClient {
@@ -78,6 +100,14 @@ extension VaporClient {
             }
             throw error
 
+        }
+    }
+    
+    func getAllRecipe() async throws -> [RecipeDTO] {
+        do {
+            return try await sendGetRequest(to: "/recipes", method: "GET", responseType: [RecipeDTO].self)
+        } catch {
+            throw error
         }
     }
 }

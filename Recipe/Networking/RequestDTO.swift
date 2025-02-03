@@ -25,3 +25,20 @@ struct LoginResponse: Codable {
     let email: String
     let password: String
 }
+
+
+struct RecipeDTO: Codable {
+    let id: UUID
+    let title: String
+    let image: String
+    let steps: String
+    let ingredients: String
+    let rating: Double
+}
+
+extension RecipeDTO {
+    func decodeJSON(recipeElement: String) -> [String] {
+        let data = Data(base64Encoded: recipeElement) ?? Data()
+        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+    }
+}

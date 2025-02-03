@@ -20,65 +20,15 @@ struct RecipeApp: App {
             fatalError("Could not create ModelContainer: \(error.localizedDescription)") 
         }
     }()
-    
-//    @State var viewModel: RecipeViewModel
-//    
-//    init() {
-//        let modelContext = sharedModelContainer.mainContext
-//        _viewModel = State(wrappedValue: RecipeViewModel(modelContext: modelContext))
-//    }
+
 
     var body: some Scene {
         
         WindowGroup {
+            let viewModel = RecipeViewModel(modelContext: sharedModelContainer.mainContext)
             MainFlow()
-                .environment(\.viewModel, RecipeViewModel(modelContext: sharedModelContainer.mainContext))
-                .onAppear {
-                    loadInitialData(modelContext: sharedModelContainer.mainContext)
-                }
+                .environment(\.viewModel, viewModel)
                 .modelContainer(sharedModelContainer)
-        }
-    }
-    
-    func loadInitialData(modelContext: ModelContext) {
-        
-        let fetchDescriptor = FetchDescriptor<Recipe>()
-        
-        if let recipeModel = try? modelContext.fetch(fetchDescriptor), !recipeModel.isEmpty {
-            return
-        }
-        
-        if let image = UIImage(named: "friedEggs") {
-            let imageData =  image.jpegData(compressionQuality: 1.0)
-            
-            let recipe = [
-                Recipe(
-                    title: "Омлет",
-                    ingredients: ["Яйца", "Соль", "Масло"],
-                    image: imageData,
-                    steps: ["Взбить яйца", "Добавить соль", "Обжарить на сковородке"],
-                    rating: 4,
-                    isFavorite: false
-                ),
-                Recipe(
-                    title: "Борщ",
-                    ingredients: ["Свекла", "Капуста", "мясо", "Картофель"],
-                    image: imageData,
-                    steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности"],
-                    rating: 4,
-                    isFavorite: false
-                )
-            ]
-            
-            for  recipeItem in recipe {
-                modelContext.insert(recipeItem)
-            }
-            
-            do {
-                try modelContext.save()
-            } catch {
-                print("Ошибка при сохранении данных")
-            }
         }
     }
 }

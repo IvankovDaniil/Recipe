@@ -11,11 +11,13 @@ class RecipeViewModel {
     var allRecipe: [Recipe] = []
     var user: UserModel? = nil
     
+    var isLoading = false
+    
     private var modelContext: ModelContext
+    private let vaporClient = VaporClient()
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
-        loadRecipes()
     }
 
     //Условие для любимых и всех рецептов
@@ -27,22 +29,38 @@ class RecipeViewModel {
     }
     
     //Загрузка рецептов всех
-    func loadRecipes() {
-        Thread.detachNewThread { [self] in
-            let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
-            do {
-                allRecipe = try modelContext.fetch(fetchDescriptor)
-            } catch {
-                print("Ошибка загрузки рецептов: \(error)")
-            }
-        }
-    }
+//    func loadRecipe() {
+//        Thread.detachNewThread { [self] in
+//            let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
+//            do {
+//                allRecipe = try modelContext.fetch(fetchDescriptor)
+//            } catch {
+//                print("Ошибка загрузки рецептов: \(error)")
+//            }
+//        }
+//    }
     //Загрузить фото
-    func showImage(for recipe: Recipe) -> Image {
-        if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
-            return Image(uiImage: uiImage)
+//    func showImage(for recipe: Recipe) -> Image {
+//        if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
+//            return Image(uiImage: uiImage)
+//        }
+//        return Image("")
+//    }
+    
+    @MainActor
+    func loadRecipes() async throws {
+        isLoading = true
+        do {
+            let response = try await vaporClient.getAllRecipe()
+            
+            for recipe in response {
+                let ingridients = recipe.decodeJSON(recipeElement: recipe.ingredients)
+                let steps = recipe.decodeJSON(recipeElement: recipe.steps)
+                allRecipe.append(Recipe(id: recipe.id, title: recipe.title, ingredients: ingridients, image: recipe.image, steps: steps))
+            }
+        } catch {
+            allRecipe = []
         }
-        return Image("")
     }
     
     func textForSteps(_ recipe: Recipe) -> String {

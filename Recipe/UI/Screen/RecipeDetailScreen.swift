@@ -16,7 +16,7 @@ struct RecipeDetailScreen: View {
         ZStack(alignment: .bottomTrailing) {
             ScrollView {
                 VStack(spacing: 0) {
-                    viewModel.showImage(for: recipe)
+                    Image(recipe.image)
                         .resizable()
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .blueRoundedBorder()
@@ -134,20 +134,26 @@ private struct TextRecipeDetail: View {
 }
 
 
-#Preview {
-    // Создаем тестовые данные
-    let image = UIImage(named: "borsch")
-    let borsch = image?.jpegData(compressionQuality: 1.0)
-    let modelContainer = try! ModelContainer(for: Recipe.self)
-    let modelContext = modelContainer.mainContext
-
-    // Создаем рецепт
-    let recipe = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: borsch, steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312",], rating: 4.0)
-    
-    // Вставляем рецепт в контекст модели
-    modelContext.insert(recipe)
-
-    // Возвращаем экран с рецептом
-    return RecipeDetailScreen(viewModel: RecipeViewModel(modelContext: modelContext), recipe: recipe)
-        .modelContainer(modelContainer)
-}
+//#Preview {
+//    // Создаем тестовые данные
+//    //let image = UIImage(named: "borsch")
+//    //let borsch = image?.jpegData(compressionQuality: 1.0)
+//    let modelContainer = try! ModelContainer(for: Recipe.self)
+//    let modelContext = modelContainer.mainContext
+//    let viewModel = RecipeViewModel(modelContext: modelContext)
+//
+//    // Создаем рецепт
+//    let recipe = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: "borsch", steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312",], rating: 4.0)
+//    
+//    // Вставляем рецепт в контекст модели
+//    modelContext.insert(recipe)
+//
+//    // Возвращаем экран с рецептом
+//    return RecipeDetailScreen(viewModel: viewModel, recipe: recipe)
+//        .modelContainer(modelContainer)
+//        .onAppear {
+//            Task {
+//                viewModel.loadRecipes()
+//            }
+//        }
+//}

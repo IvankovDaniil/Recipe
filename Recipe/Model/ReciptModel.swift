@@ -12,13 +12,13 @@ import SwiftData
 class Recipe: Identifiable {
     var id = UUID()
     var title: String
-    var ingredients: String // Сохраняем как строку (например, JSON)
-    var image: Data?
-    var steps: String // Сохраняем как строку (например, JSON)
+    var ingredients: String
+    var image: String
+    var steps: String
     var rating: Double = 0
     var isFavorite: Bool = false
     
-    init(id: UUID = UUID(), title: String, ingredients: [String], image: Data?, steps: [String], rating: Double = 0, isFavorite: Bool = false) {
+    init(id: UUID = UUID(), title: String, ingredients: [String], image: String, steps: [String], rating: Double = 0, isFavorite: Bool = false) {
         self.id = id
         self.title = title
         self.ingredients = try! JSONEncoder().encode(ingredients).base64EncodedString()

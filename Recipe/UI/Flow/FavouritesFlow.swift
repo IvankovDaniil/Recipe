@@ -6,7 +6,7 @@ struct FavouritesFlow: View {
     
     var body: some View {
         NavigationStack(path: $path) {
-            ReciptScreen(path: $path, modelContext: modelContext, screenCondition: .favoriteScreen)
+            ReciptScreen(path: $path, screenCondition: .favoriteScreen)
         }
     }
 }
