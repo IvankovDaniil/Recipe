@@ -21,17 +21,16 @@ class Recipe: Identifiable {
     init(id: UUID = UUID(), title: String, ingredients: [String], image: String, steps: [String], rating: Double = 0, isFavorite: Bool = false) {
         self.id = id
         self.title = title
-        self.ingredients = try! JSONEncoder().encode(ingredients).base64EncodedString()
+        self.ingredients = ingredients.map { $0 + " " }.joined()
         self.image = image
-        self.steps = try! JSONEncoder().encode(steps).base64EncodedString()
+        self.steps = steps.map { $0 + "   " }.joined()
         self.rating = rating
         self.isFavorite = isFavorite
     }
 
     
     func decodeJSON(recipeElement: String) -> [String] {
-        let data = Data(base64Encoded: recipeElement) ?? Data()
-        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+        return recipeElement.components(separatedBy: "   ").dropLast()
     }
     
 }

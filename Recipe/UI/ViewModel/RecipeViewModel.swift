@@ -9,7 +9,6 @@ enum ScreenCondition {
 @Observable
 class RecipeViewModel {
     var allRecipe: [Recipe] = []
-    var user: UserModel? = nil
     
     var isLoading = false
     
@@ -28,25 +27,6 @@ class RecipeViewModel {
         }
     }
     
-    //Загрузка рецептов всех
-//    func loadRecipe() {
-//        Thread.detachNewThread { [self] in
-//            let fetchDescriptor = FetchDescriptor<Recipe>(sortBy: [SortDescriptor(\.title)])
-//            do {
-//                allRecipe = try modelContext.fetch(fetchDescriptor)
-//            } catch {
-//                print("Ошибка загрузки рецептов: \(error)")
-//            }
-//        }
-//    }
-    //Загрузить фото
-//    func showImage(for recipe: Recipe) -> Image {
-//        if let imageResource = recipe.image, let uiImage = UIImage(data: imageResource) {
-//            return Image(uiImage: uiImage)
-//        }
-//        return Image("")
-//    }
-    
     @MainActor
     func loadRecipes() async throws {
         isLoading = true
@@ -56,11 +36,12 @@ class RecipeViewModel {
             for recipe in response {
                 let ingridients = recipe.decodeJSON(recipeElement: recipe.ingredients)
                 let steps = recipe.decodeJSON(recipeElement: recipe.steps)
-                allRecipe.append(Recipe(id: recipe.id, title: recipe.title, ingredients: ingridients, image: recipe.image, steps: steps))
+                allRecipe.append(Recipe(id: recipe.id, title: recipe.title, ingredients: ingridients, image: recipe.image, steps: steps, rating: recipe.rating))
             }
         } catch {
             allRecipe = []
         }
+        isLoading = false
     }
     
     func textForSteps(_ recipe: Recipe) -> String {

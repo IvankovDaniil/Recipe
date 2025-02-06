@@ -8,6 +8,7 @@ enum MainFlowTab {
 
 struct MainFlow: View {
     @Environment(\.viewModel) var viewModel
+    @Environment(\.userViewModel) var userViewModel
     
     @State private var currentTab: MainFlowTab = .recipt
     private let buttons: [TabBarButtonConfiguration] =
@@ -34,7 +35,14 @@ struct MainFlow: View {
                 SettingsFlow()
                     .tag(MainFlowTab.settings)
             }
-            TabBarLabel(buttons: buttons, currentTab: $currentTab)
+            .safeAreaInset(edge: .bottom) {
+                TabBarLabel(buttons: buttons, currentTab: $currentTab)
+                    .background(
+                        Color.white
+                            .background(BlurView(style: .systemThinMaterial))
+                            .ignoresSafeArea(edges: .bottom)
+                    )
+            }
         }
         .task {
             do {

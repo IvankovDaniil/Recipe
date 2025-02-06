@@ -26,8 +26,11 @@ struct RecipeApp: App {
         
         WindowGroup {
             let viewModel = RecipeViewModel(modelContext: sharedModelContainer.mainContext)
+            let userViewModel = UserViewModel(modelContext: sharedModelContainer.mainContext)
+            
             MainFlow()
                 .environment(\.viewModel, viewModel)
+                .environment(userViewModel)
                 .modelContainer(sharedModelContainer)
         }
     }

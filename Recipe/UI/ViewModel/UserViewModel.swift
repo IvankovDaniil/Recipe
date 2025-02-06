@@ -29,7 +29,7 @@ class UserViewModel  {
     var emailError = false
     var passwordError = false
     
-    //На старте приложения проверяем есть ли пользователь залогигенный
+    //На старте приложения проверяем есть ли пользователь залогиненный
     func loadUser() {
         let fetchDescriptor = FetchDescriptor<UserModel>()
         if let savedUser = try? modelContext.fetch(fetchDescriptor).first {
@@ -99,3 +99,13 @@ class UserViewModel  {
     }
 }
 
+private struct UserViewModelKey: EnvironmentKey {
+    static var defaultValue: UserViewModel? = nil
+}
+
+extension EnvironmentValues {
+    var userViewModel: UserViewModel? {
+        get { self[UserViewModelKey.self] }   // ✅ Используем правильный ключ!
+        set { self[UserViewModelKey.self] = newValue }
+    }
+}

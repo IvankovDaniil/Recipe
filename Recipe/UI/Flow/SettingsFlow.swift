@@ -12,7 +12,6 @@ struct SettingsFlow: View {
     
     var body: some View {
         SettingsScreen()
-            .environment(UserViewModel(modelContext: modelContext))
     }
 }
 

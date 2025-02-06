@@ -10,6 +10,7 @@ import SwiftData
 
 struct RecipeDetailScreen: View {
     @Bindable var viewModel: RecipeViewModel
+    @Environment(UserViewModel.self) private var userViewModel
     var recipe: Recipe
     
     var body: some View {
@@ -22,7 +23,6 @@ struct RecipeDetailScreen: View {
                         .blueRoundedBorder()
                         .frame(width: 300, height: 200)
                         .padding(.bottom, 25)
-                    
                     VStack(spacing: 0) {
                         Text(recipe.title)
                             .font(.title)
@@ -40,17 +40,24 @@ struct RecipeDetailScreen: View {
                     
                 }
             }
-            Button {
-                recipe.isFavorite.toggle()
-            } label: {
-                Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
-                    .resizable()
-                    .frame(width: 40, height: 40)
-                    .foregroundStyle(.red)
-                    .shadow(radius: 10)
+            if let _ = userViewModel.user {
+                Button {
+                    recipe.isFavorite.toggle()
+                } label: {
+                    Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                        .foregroundStyle(.red)
+                        .shadow(radius: 10)
+                }
+                .padding([.bottom, .trailing], 20)
             }
-            .padding([.bottom, .trailing], 20)
+            
+            
         }
+//        .onAppear {
+//            print("\(String(describing: userViewModel?.user))")
+//        }
     }
 }
 
@@ -133,27 +140,3 @@ private struct TextRecipeDetail: View {
     }
 }
 
-
-//#Preview {
-//    // Создаем тестовые данные
-//    //let image = UIImage(named: "borsch")
-//    //let borsch = image?.jpegData(compressionQuality: 1.0)
-//    let modelContainer = try! ModelContainer(for: Recipe.self)
-//    let modelContext = modelContainer.mainContext
-//    let viewModel = RecipeViewModel(modelContext: modelContext)
-//
-//    // Создаем рецепт
-//    let recipe = Recipe(title: "Борщ", ingredients: ["Свекла", "Капуста", "Мясо", "Картофель"], image: "borsch", steps: ["Смешать в кастрюле все ингредиенты", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312", "Варить до готовности123124123124213124123124312312",], rating: 4.0)
-//    
-//    // Вставляем рецепт в контекст модели
-//    modelContext.insert(recipe)
-//
-//    // Возвращаем экран с рецептом
-//    return RecipeDetailScreen(viewModel: viewModel, recipe: recipe)
-//        .modelContainer(modelContainer)
-//        .onAppear {
-//            Task {
-//                viewModel.loadRecipes()
-//            }
-//        }
-//}

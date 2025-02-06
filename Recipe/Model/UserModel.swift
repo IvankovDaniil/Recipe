@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUICore
 import SwiftData
 
 @Model
@@ -17,3 +18,4 @@ class UserModel: Identifiable {
         self.email = email
     }
 }
+

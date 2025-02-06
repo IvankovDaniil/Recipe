@@ -38,7 +38,6 @@ struct RecipeDTO: Codable {
 
 extension RecipeDTO {
     func decodeJSON(recipeElement: String) -> [String] {
-        let data = Data(base64Encoded: recipeElement) ?? Data()
-        return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+        return recipeElement.components(separatedBy: ", ")
     }
 }
