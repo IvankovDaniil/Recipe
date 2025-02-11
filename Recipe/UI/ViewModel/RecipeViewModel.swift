@@ -27,6 +27,7 @@ class RecipeViewModel {
         }
     }
     
+    //Загрузка всех рецептов с сервера, происходит на main Threads
     @MainActor
     func loadRecipes() async throws {
         isLoading = true
@@ -44,6 +45,8 @@ class RecipeViewModel {
         isLoading = false
     }
     
+    
+    //Функция для подсчета кол-во шагов
     func textForSteps(_ recipe: Recipe) -> String {
         switch countSteps(for: recipe) {
            
@@ -58,6 +61,8 @@ class RecipeViewModel {
         return recipe.decodeJSON(recipeElement: recipe.steps).count
     }
     
+    
+    //Для Navigaion title
     func titleForRecipeScree(screenCondition: ScreenCondition) -> String {
         switch screenCondition {
         case .recipeScreen: return "Рецепты"
@@ -65,11 +70,26 @@ class RecipeViewModel {
         }
     }
     
+    
+    //Проверка условия для показа ингридиентов в мини рецепте
     func viewCondition(for recipe: Recipe, limit: Int = 3) -> [String] {
         let ingridients = recipe.decodeJSON(recipeElement: recipe.ingredients)
         return Array(ingridients.prefix(limit))
     }
-
+    
+    //Для добавления в СвифтДату рецептов, которые лайкнули, что бы иметь доступ к ним без сети
+    func addRecipeToSwiftData(for recipe: Recipe) {
+        do {
+            if recipe.isFavorite {
+                modelContext.insert(recipe)
+            } else {
+                modelContext.delete(recipe)
+            }
+            try modelContext.save()
+        } catch {
+            print("SomeError")
+        }
+    }
 }
 
 struct RecipeViewModelKey: EnvironmentKey {

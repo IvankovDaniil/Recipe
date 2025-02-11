@@ -85,14 +85,13 @@ struct RegisterView: View {
 
 #Preview {
     RegisterView(action: {})
-        .modelContainer(for: UserModel.self, inMemory: true) // 👈 Добавляем контейнер для Preview
+        .modelContainer(for: UserModel.self, inMemory: true)
         .environment(UserViewModel(modelContext: ModelContext.preview))
     
 }
 
 
 extension ModelContext {
-    /// Фейковый `modelContext` для Preview
     static var preview: ModelContext {
         let container = try! ModelContainer(for: UserModel.self, configurations: .init(isStoredInMemoryOnly: true))
         return ModelContext(container)

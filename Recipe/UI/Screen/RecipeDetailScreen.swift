@@ -42,7 +42,7 @@ struct RecipeDetailScreen: View {
             }
             if let _ = userViewModel.user {
                 Button {
-                    recipe.isFavorite.toggle()
+                    userViewModel.toggleRecipeLike(for: recipe)
                 } label: {
                     Image(systemName: recipe.isFavorite ? "heart.fill" : "heart")
                         .resizable()
@@ -55,9 +55,6 @@ struct RecipeDetailScreen: View {
             
             
         }
-//        .onAppear {
-//            print("\(String(describing: userViewModel?.user))")
-//        }
     }
 }
 

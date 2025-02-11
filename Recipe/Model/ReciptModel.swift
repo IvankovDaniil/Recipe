@@ -21,7 +21,7 @@ class Recipe: Identifiable {
     init(id: UUID = UUID(), title: String, ingredients: [String], image: String, steps: [String], rating: Double = 0, isFavorite: Bool = false) {
         self.id = id
         self.title = title
-        self.ingredients = ingredients.map { $0 + " " }.joined()
+        self.ingredients = ingredients.map { $0 + "   " }.joined()
         self.image = image
         self.steps = steps.map { $0 + "   " }.joined()
         self.rating = rating

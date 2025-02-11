@@ -67,6 +67,23 @@ class UserViewModel  {
         isLoad = false
     }
     
+    func toggleRecipeLike(for recipe: Recipe) {
+        do {
+            recipe.isFavorite.toggle()
+            
+            if recipe.isFavorite {
+                modelContext.insert(recipe)
+            } else {
+                modelContext.delete(recipe)
+            }
+            try modelContext.save()
+            
+        } catch {
+            print("SOMEERROR")
+        }
+    }
+    
+    
     func loginUser(_ email: String, _ password: String) async throws {
         isLoad = true
         

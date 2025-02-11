@@ -67,7 +67,7 @@ private struct NonRegisterView: View {
 
 #Preview {
     SettingsScreen()
-        .modelContainer(for: UserModel.self, inMemory: true) // 👈 Добавляем контейнер для Preview
+        .modelContainer(for: UserModel.self, inMemory: true)
         .environment(UserViewModel(modelContext: ModelContext.preview))
 }
 
